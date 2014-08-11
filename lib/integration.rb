@@ -1,6 +1,6 @@
 # Copyright (c) 2005  Beng (original code)
 #               2011  Claudio Bustos
-#               XXXX -> Add new developers
+#               2014  Rajat Kapoor
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
@@ -89,8 +89,11 @@ class Integration
       })+f[t2.to_f].to_f)
       out
     end
-    # TODO: Document method
-    def simpson3by8(t1, t2, n, &f)
+    # Simpson's 3/8 Rule
+    # +n+ implies number of subdivisions
+    # Source:
+    #   * Burden, Richard L. and Faires, J. Douglas (2000): Numerical Analysis (7th ed.). Brooks/Cole
+	def simpson3by8(t1, t2, n, &f)
       d = (t2-t1) / n.to_f 
       ac = 0
       (0..n-1).each do |i|
@@ -98,7 +101,10 @@ class Integration
       end
       ac
     end
-    # TODO: Document method
+    # Boole's Rule
+    # +n+ implies number of subdivisions
+    # Source:
+    # Weisstein, Eric W. "Boole's Rule." From MathWorld—A Wolfram Web Resource
     def boole(t1, t2, n, &f)
       d = (t2-t1) / n.to_f 
       ac = 0
@@ -107,8 +113,9 @@ class Integration
       end
       ac
     end
-
-    # TODO: Document method
+    # Open Trapezoid method
+    # +n+ implies number of subdivisions
+    # Values computed at mid point and end point instead of starting points
     def open_trapezoid(t1, t2, n, &f)
       d = (t2-t1) / n.to_f 
       ac = 0
@@ -117,7 +124,12 @@ class Integration
       end
       ac
     end
-    # TODO: Document method
+    # Milne's Method
+    # +n+ implies number of subdivisions
+    # Source:
+    # Abramowitz, M. and Stegun, I. A. (Eds.). 
+    # Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables,
+    # 9th printing. New York: Dover, pp. 896-897, 1972.
     def milne(t1, t2, n, &f)
       d = (t2-t1) / n.to_f 
       ac = 0
@@ -126,7 +138,10 @@ class Integration
       end
       ac
     end
-    # TODO: Document method
+    # Adaptive Quadrature
+    # Calls the Simpson's rule recursively on subintervals 
+    # in case the error exceeds the desired tolerance
+    # +tolerance+ is the desired tolerance of error
     def adaptive_quadrature(a, b, tolerance)  
       h = (b.to_f - a) / 2
       fa = yield(a)
@@ -151,7 +166,8 @@ class Integration
       }
       return helper.call(a, b, fa, fb, fc, h, s, 1)
     end
-    # TODO: Document method
+    # Gaussian Quadrature
+    # n-point Gaussian quadrature rule gives an exact result for polynomials of degree 2n − 1 or less
     def gauss(t1, t2, n)
       case n
         when 1
@@ -195,9 +211,11 @@ class Integration
       end
       return ((t2 - t1) / 2.0) * sum
     end
-    # TODO: Document method
+    # Gauss Kronrod Rule:
+    # Provides a 3n+1 order estimate while re-using the function values of a lower-order(n order) estimate
+    # Source:
+    # "Gauss–Kronrod quadrature formula", Encyclopedia of Mathematics, Springer, ISBN 978-1-55608-010-4
     def gauss_kronrod(t1,t2,n,points)
-      #g7k15
       case points
         when 15
           z = [-0.9914553711208126, -0.9491079123427585, -0.8648644233597691, -0.7415311855993945, -0.5860872354676911, -0.4058451513773972, -0.20778495500789848, 0.0, 0.20778495500789848, 0.4058451513773972, 0.5860872354676911, 0.7415311855993945, 0.8648644233597691, 0.9491079123427585, 0.9914553711208126]
@@ -230,7 +248,8 @@ class Integration
       end
       return ((t2 - t1) / 2.0) * sum
     end
-    # TODO: Document method
+    # Romberg Method:
+    # It is obtained by applying extrapolation techniques repeatedly on the trapezoidal rule
     def romberg(a, b, tolerance,max_iter=20)
       # NOTE one-based arrays are used for convenience
       h = b.to_f - a
@@ -252,7 +271,9 @@ class Integration
       r[j][j]
     end
     
-    # TODO: Document method
+    # Monte Carlo:
+    # Uses a non deterministic(probabilistic) approach for calculation of definite integrals
+    # Estimates the integral by randomly choosing points in a set and then calculating the number of points that fall in the desired area
     def monte_carlo(t1, t2, n)
       width = (t2 - t1).to_f
       height = nil
